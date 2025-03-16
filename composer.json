@@ -1,5 +1,5 @@
 {
-    "name": "web3p/ethereum-tx",
+    "name": "cnx/ethereum-tx",
     "description": "Ethereum transaction library in PHP.",
     "type": "library",
     "license": "MIT",
@@ -10,11 +10,11 @@
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "~7|~8.0"
+        "phpunit/phpunit": "~8.0"
     },
     "autoload": {
         "psr-4": {
-            "Web3p\\EthereumTx\\": "src/"
+            "Cnx\\EthereumTx\\": "src/"
         }
     },
     "autoload-dev": {
@@ -23,7 +23,7 @@
         }
     },
     "require": {
-        "PHP": "^7.1|^8.0",
+        "PHP": "^8.0",
         "web3p/rlp": "0.3.5",
         "web3p/ethereum-util": "~0.1.3",
         "kornrunner/keccak": "~1",

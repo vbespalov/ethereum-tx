@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-namespace Web3p\EthereumTx;
+namespace Cnx\EthereumTx;
 
 use InvalidArgumentException;
 use RuntimeException;
@@ -34,7 +34,7 @@ class TypeTransaction implements ArrayAccess
      * 
      * @var array
      */
-    protected $attributeMap = [
+    protected array $attributeMap = [
         'from' => [
             'key' => -1
         ],
@@ -102,42 +102,42 @@ class TypeTransaction implements ArrayAccess
      * 
      * @var array
      */
-    protected $txData = [];
+    protected array $txData = [];
 
     /**
      * RLP encoding instance
      * 
      * @var \Web3p\RLP\RLP
      */
-    protected $rlp;
+    protected RLP $rlp;
 
     /**
      * secp256k1 elliptic curve instance
      * 
      * @var \Elliptic\EC
      */
-    protected $secp256k1;
+    protected EC $secp256k1;
 
     /**
      * Private key instance
      * 
      * @var \Elliptic\EC\KeyPair
      */
-    protected $privateKey;
+    protected KeyPair $privateKey;
 
     /**
      * Ethereum util instance
      * 
      * @var \Web3p\EthereumUtil\Util
      */
-    protected $util;
+    protected Util $util;
 
     /**
      * Transaction type
      * 
      * @var string
      */
-    protected $transactionType = '00';
+    protected string $transactionType = '00';
 
     /**
      * construct
@@ -145,7 +145,7 @@ class TypeTransaction implements ArrayAccess
      * @param array|string $txData
      * @return void
      */
-    public function __construct($txData=[])
+    public function __construct(array|string $txData=[])
     {
         $this->rlp = new RLP;
         $this->secp256k1 = new EC('secp256k1');
@@ -188,7 +188,7 @@ class TypeTransaction implements ArrayAccess
      * @param string $name key or protected property name
      * @return mixed
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         $method = 'get' . ucfirst($name);
 
@@ -202,17 +202,17 @@ class TypeTransaction implements ArrayAccess
      * Set the value in the transaction with given key or return the protected value if set(property_name} function is existed.
      * 
      * @param string $name key, eg: to
-     * @param mixed value
+     * @param mixed $value value
      * @return void
      */
-    public function __set(string $name, $value)
+    public function __set(string $name, mixed $value)
     {
         $method = 'set' . ucfirst($name);
 
         if (method_exists($this, $method)) {
             return call_user_func_array([$this, $method], [$value]);
         }
-        return $this->offsetSet($name, $value);
+        $this->offsetSet($name, $value);
     }
 
     /**
@@ -229,10 +229,10 @@ class TypeTransaction implements ArrayAccess
      * Set the value in the transaction with given key.
      * 
      * @param string $offset key, eg: to
-     * @param string value
+     * @param string $value value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -297,7 +297,7 @@ class TypeTransaction implements ArrayAccess
      * @param string $offset key, eg: to
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -313,7 +313,7 @@ class TypeTransaction implements ArrayAccess
      * @param string $offset key, eg: to
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -328,7 +328,7 @@ class TypeTransaction implements ArrayAccess
      * @param string $offset key, eg: to 
      * @return mixed value of the transaction
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 

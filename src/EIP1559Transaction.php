@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-namespace Web3p\EthereumTx;
+namespace Cnx\EthereumTx;
 
 use InvalidArgumentException;
 use RuntimeException;
@@ -18,7 +18,7 @@ use Elliptic\EC;
 use Elliptic\EC\KeyPair;
 use ArrayAccess;
 use Web3p\EthereumUtil\Util;
-use Web3p\EthereumTx\TypeTransaction;
+use Cnx\EthereumTx\TypeTransaction;
 
 /**
  * It's a instance for generating/serializing ethereum eip1559 transaction.
@@ -66,7 +66,7 @@ class EIP1559Transaction extends TypeTransaction
      * 
      * @var array
      */
-    protected $attributeMap = [
+    protected array $attributeMap = [
         'from' => [
             'key' => -1
         ],
@@ -146,7 +146,7 @@ class EIP1559Transaction extends TypeTransaction
      * 
      * @var string
      */
-    protected $transactionType = '02';
+    protected string $transactionType = '02';
 
     /**
      * construct
@@ -154,7 +154,7 @@ class EIP1559Transaction extends TypeTransaction
      * @param array|string $txData
      * @return void
      */
-    public function __construct($txData=[])
+    public function __construct(array|string $txData=[])
     {
         parent::__construct($txData);
     }
@@ -164,7 +164,7 @@ class EIP1559Transaction extends TypeTransaction
      * 
      * @return string hex encoded of the serialized ethereum transaction
      */
-    public function serialize()
+    public function serialize(): string
     {
         // sort tx data
         if (ksort($this->txData) !== true) {
@@ -186,7 +186,7 @@ class EIP1559Transaction extends TypeTransaction
      * @param string $privateKey hex encoded private key
      * @return string hex encoded signed ethereum transaction
      */
-    public function sign(string $privateKey)
+    public function sign(string $privateKey): string
     {
         if ($this->util->isHex($privateKey)) {
             $privateKey = $this->util->stripZero($privateKey);
@@ -216,7 +216,7 @@ class EIP1559Transaction extends TypeTransaction
      * @param bool $includeSignature hash with signature
      * @return string hex encoded hash of the ethereum transaction
      */
-    public function hash(bool $includeSignature=false)
+    public function hash(bool $includeSignature=false): string
     {
         // sort tx data
         if (ksort($this->txData) !== true) {

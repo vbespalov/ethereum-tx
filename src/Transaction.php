@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-namespace Web3p\EthereumTx;
+namespace Cnx\EthereumTx;
 
 use InvalidArgumentException;
 use RuntimeException;
@@ -23,7 +23,7 @@ use Web3p\EthereumUtil\Util;
  * It's a instance for generating/serializing ethereum transaction.
  * 
  * ```php
- * use Web3p\EthereumTx\Transaction;
+ * use Cnx\EthereumTx\Transaction;
  * 
  * // generate transaction instance with transaction parameters
  * $transaction = new Transaction([
@@ -63,7 +63,7 @@ class Transaction implements ArrayAccess
      * 
      * @var array
      */
-    protected $attributeMap = [
+    protected array $attributeMap = [
         'from' => [
             'key' => -1
         ],
@@ -131,35 +131,35 @@ class Transaction implements ArrayAccess
      * 
      * @var array
      */
-    protected $txData = [];
+    protected array $txData = [];
 
     /**
      * RLP encoding instance
      * 
      * @var \Web3p\RLP\RLP
      */
-    protected $rlp;
+    protected RLP $rlp;
 
     /**
      * secp256k1 elliptic curve instance
      * 
      * @var \Elliptic\EC
      */
-    protected $secp256k1;
+    protected EC $secp256k1;
 
     /**
      * Private key instance
      * 
      * @var \Elliptic\EC\KeyPair
      */
-    protected $privateKey;
+    protected KeyPair $privateKey;
 
     /**
      * Ethereum util instance
      * 
      * @var \Web3p\EthereumUtil\Util
      */
-    protected $util;
+    protected Util $util;
 
     /**
      * construct
@@ -167,7 +167,7 @@ class Transaction implements ArrayAccess
      * @param array|string $txData
      * @return void
      */
-    public function __construct($txData=[])
+    public function __construct(array|string $txData=[])
     {
         $this->rlp = new RLP;
         $this->secp256k1 = new EC('secp256k1');
@@ -205,7 +205,7 @@ class Transaction implements ArrayAccess
      * @param string $name key or protected property name
      * @return mixed
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         $method = 'get' . ucfirst($name);
 
@@ -222,14 +222,14 @@ class Transaction implements ArrayAccess
      * @param mixed value
      * @return void
      */
-    public function __set(string $name, $value)
+    public function __set(string $name, $value): void
     {
         $method = 'set' . ucfirst($name);
 
         if (method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], [$value]);
+            call_user_func_array([$this, $method], [$value]);
         }
-        return $this->offsetSet($name, $value);
+        $this->offsetSet($name, $value);
     }
 
     /**
@@ -246,10 +246,10 @@ class Transaction implements ArrayAccess
      * Set the value in the transaction with given key.
      * 
      * @param string $offset key, eg: to
-     * @param string value
+     * @param string $value value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -289,7 +289,7 @@ class Transaction implements ArrayAccess
      * @param string $offset key, eg: to
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -305,7 +305,7 @@ class Transaction implements ArrayAccess
      * @param string $offset key, eg: to
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -320,7 +320,7 @@ class Transaction implements ArrayAccess
      * @param string $offset key, eg: to 
      * @return mixed value of the transaction
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         $txKey = isset($this->attributeMap[$offset]) ? $this->attributeMap[$offset] : null;
 
@@ -335,7 +335,7 @@ class Transaction implements ArrayAccess
      * 
      * @return array raw ethereum transaction data
      */
-    public function getTxData()
+    public function getTxData(): array
     {
         return $this->txData;
     }
@@ -345,7 +345,7 @@ class Transaction implements ArrayAccess
      * 
      * @return string hex encoded of the serialized ethereum transaction
      */
-    public function serialize()
+    public function serialize(): string
     {
         $chainId = $this->offsetGet('chainId');
 
@@ -372,7 +372,7 @@ class Transaction implements ArrayAccess
      * @param string $privateKey hex encoded private key
      * @return string hex encoded signed ethereum transaction
      */
-    public function sign(string $privateKey)
+    public function sign(string $privateKey): string
     {
         if ($this->util->isHex($privateKey)) {
             $privateKey = $this->util->stripZero($privateKey);
@@ -408,7 +408,7 @@ class Transaction implements ArrayAccess
      * @param bool $includeSignature hash with signature
      * @return string hex encoded hash of the ethereum transaction
      */
-    public function hash(bool $includeSignature=false)
+    public function hash(bool $includeSignature=false): string
     {
         $chainId = $this->offsetGet('chainId');
 
@@ -445,10 +445,11 @@ class Transaction implements ArrayAccess
 
     /**
      * Recover from address with given signature (r, s, v) if didn't set from.
-     * 
+     *
      * @return string hex encoded ethereum address
+     * @throws \Exception
      */
-    public function getFromAddress()
+    public function getFromAddress(): string
     {
         $from = $this->offsetGet('from');
 
